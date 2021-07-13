@@ -8,9 +8,6 @@
                     $(notice).html(lenghtCounter($(this).val()));
                 });
             });
-            jQuery('[data-index="check"]').on('click', function() {
-                console.log("SDfsd");
-            })
         });
 
     function lenghtCounter(message) {
@@ -23,6 +20,24 @@
             return "Number of messages: " + Math.floor(messages) + " (" + lenght + ")";
         } else {
             return "The field is empty";
+        }
+    }
+
+    function checkPrice(phonesno, price) {
+        if (phonesno == 0 || price == 0) {
+            alert("Please filter at least a phone number or send at least one SMS");
+        } else {
+            message = document.querySelectorAll('div.sendsms-char-count-filtered textarea')[0].value;
+            var lenght = message.length;
+            var messages = lenght / 160 + 1;
+            if (lenght > 0) {
+                if (lenght % 160 === 0) {
+                    messages--;
+                }
+            } else {
+                messages = 0;
+            }
+            alert("The estimate price is of " + parseFloat(messages * price * phonesno).toPrecision(4) + " euro.")
         }
     }
 </script>

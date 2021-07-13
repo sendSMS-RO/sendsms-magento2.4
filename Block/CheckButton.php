@@ -15,18 +15,22 @@ class CheckButton extends GenericButton implements ButtonProviderInterface
      */
     public function getButtonData()
     {
-        $alert = "Please send an SMS first";
+        $phonesno = 0;
+        $price = 0;
         if ($this->registry->registry('phonesno')) {
             $phonesno = $this->registry->registry('phonesno');
             $configs = $this->collection
                 ->addFieldToFilter('scope', ScopeConfigInterface::SCOPE_TYPE_DEFAULT)
                 ->addFieldToFilter('scope_id', Store::DEFAULT_STORE_ID)
-                ->addFieldToFilter('path', ['in' => ['sendsms_settings/sendsms/sendsms_settings_price', 'sendsms_settings/sendsms/sendsms_settings_price_date']])
+                ->addFieldToFilter('path', ['in' => ['sendsms_settings/sendsms/sendsms_settings_price']])
                 ->getData();
+                if(!empty($configs)) {
+                    $price = $configs[0]['value'];
+                }
         }
         return [
             'label' => __('Check price'),
-            'on_click' => "alert('$alert')",
+            'on_click' => "checkPrice($phonesno, $price)",
             'class' => 'primary',
             'sort_order' => 100
         ];
