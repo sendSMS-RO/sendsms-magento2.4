@@ -20,6 +20,7 @@ class ShowPhones extends Template
 
     public function getPhones()
     {
+        $phonesno = 0;
         if ($this->_coreRegistry->registry('phonesno')) {
             $phonesno = $this->_coreRegistry->registry('phonesno');
         }

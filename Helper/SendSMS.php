@@ -147,7 +147,7 @@ class SendSMS extends AbstractHelper
             $file_type = "csv";
             $url = "https://api.sendsms.ro/json";
 
-            $start_time = "";
+            $start_time = "2970-01-01 02:00:00";
             $curl = curl_init();
 
             $url = $url . "?action=batch_create";

@@ -15,7 +15,7 @@
                     <label>Username</label>
                     <comment model="AnyPlaceMedia\SendSMS\Block\Adminhtml\System\Balance" />
                 </field>
-                <field id="sendsms_settings_password" translate="label" type="obscure" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="sendsms_settings_password" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Password</label>
                 </field>
                 <field id="sendsms_settings_from" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
