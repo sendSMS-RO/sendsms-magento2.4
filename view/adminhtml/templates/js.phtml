@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    require(
+        ['jquery'],
+        function($) {
+            $(function() {
+                $(document).on('keyup', 'div.sendsms-char-count-filtered textarea', function(event) {
+                    var notice = $(document).find('.admin__field-note span')[0];
+                    $(notice).html(lenghtCounter($(this).val()));
+                });
+            });
+            jQuery('[data-index="check"]').on('click', function() {
+                console.log("SDfsd");
+            })
+        });
+
+    function lenghtCounter(message) {
+        var lenght = message.length;
+        var messages = lenght / 160 + 1;
+        if (lenght > 0) {
+            if (lenght % 160 === 0) {
+                messages--;
+            }
+            return "Number of messages: " + Math.floor(messages) + " (" + lenght + ")";
+        } else {
+            return "The field is empty";
+        }
+    }
+</script>

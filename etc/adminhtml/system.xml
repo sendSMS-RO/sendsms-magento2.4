@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="sendsms_tab" translate="label" sortOrder="10">
+            <label>SendSMS</label>
+        </tab>
+        <section id="sendsms_settings" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Settings</label>
+            <tab>sendsms_tab</tab>
+            <resource>AnyPlaceMedia_SendSMS::sendsms_configuration</resource>
+            <group id="sendsms" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Settings</label>
+                <field id="sendsms_settings_username" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Username</label>
+                    <comment model="AnyPlaceMedia\SendSMS\Block\Adminhtml\System\Balance" />
+                </field>
+                <field id="sendsms_settings_password" translate="label" type="obscure" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Password</label>
+                </field>
+                <field id="sendsms_settings_from" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Label</label>
+                    <comment model="AnyPlaceMedia\SendSMS\Block\Adminhtml\System\DynamicComment" />
+                </field>
+                <field id="sendsms_settings_prefix" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Phone number prefix</label>
+                    <source_model>AnyPlaceMedia\SendSMS\Model\Config\Source\Prefix</source_model>
+                </field>
+                <field id="sendsms_settings_simulation" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>SMS sending simulation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sendsms_settings_simulation_number" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>SMS simulation phone number</label>
+                </field>
+                <field id="sendsms_settings_messages" translate="label" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Messages</label>
+                    <frontend_model>AnyPlaceMedia\SendSMS\Block\Adminhtml\Form\Field\Messages</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Disponible variables: {tracking_numbers}, {billing_first_name}, {billing_last_name}, {shipping_first_name}, {shipping_last_name}, {order_number}, {order_date}, {order_total}</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

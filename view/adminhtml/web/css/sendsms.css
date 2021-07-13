@@ -1,0 +1,8 @@
+.sendsms-button {
+    float: right;
+    margin: 0.5em;
+}
+
+.sendsms-button>span {
+    font-size: 1.25em;
+}

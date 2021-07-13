@@ -1,0 +1,120 @@
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">campaign_form.campaign_form_data_source</item>
+            <item name="deps" xsi:type="string">campaign_form.campaign_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Campaign</item>
+        <item name="layout" xsi:type="array">
+            <item name="type" xsi:type="string">tabs</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="save" xsi:type="string">AnyPlaceMedia\SendSMS\Block\SaveButton</item>
+        </item>
+    </argument>
+
+    <dataSource name="campaign_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">AnyPlaceMedia\SendSMS\Model\Campaign</argument>
+            <argument name="name" xsi:type="string">campaign_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">entity_id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+                <item name="submit_url" path="sendsms/campaign/index" xsi:type="url" />
+            </item>
+        </argument>
+    </dataSource>
+
+    <fieldset name="campaign_form">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Filters</item>
+            </item>
+        </argument>
+
+        <!-- This field represents form id and is hidden -->
+        <field name="entity_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="visible" xsi:type="boolean">false</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="start_date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="label" xsi:type="string" translate="true">Start period</item>
+                    <item name="formElement" xsi:type="string">date</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                    <item name="options" xsi:type="array">
+                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
+                        <item name="timeFormat" xsi:type="string">hh:mm:ss</item>
+                        <item name="showsTime" xsi:type="boolean">false</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="end_date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="label" xsi:type="string" translate="true">End period</item>
+                    <item name="formElement" xsi:type="string">date</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                    <item name="options" xsi:type="array">
+                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
+                        <item name="timeFormat" xsi:type="string">hh:mm:ss</item>
+                        <item name="showsTime" xsi:type="boolean">false</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="min_sum">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Minimum order amount</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="product">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">AnyPlaceMedia\SendSMS\Model\Source\Products</item>
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Purchased product</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">multiselect</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="county">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">AnyPlaceMedia\SendSMS\Model\Source\Regions</item>
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Billing country</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">multiselect</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>

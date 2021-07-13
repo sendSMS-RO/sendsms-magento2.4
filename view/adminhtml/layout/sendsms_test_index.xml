@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <container name="sendsms_messages">
+
+            </container>
+            <block name="form" class="Magento\Framework\View\Element\Template" template="AnyPlaceMedia_SendSMS::test.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

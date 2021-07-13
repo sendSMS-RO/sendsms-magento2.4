@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="AnyPlaceMedia_SendSMS::main" title="SendSMS" module="AnyPlaceMedia_SendSMS" sortOrder="51" resource="AnyPlaceMedia_SendSMS::main"/>
+        <add id="AnyPlaceMedia_SendSMS::info" title="Informations" module="AnyPlaceMedia_SendSMS" sortOrder="10" action="sendsms/info" resource="AnyPlaceMedia_SendSMS::info" parent="AnyPlaceMedia_SendSMS::main"/>
+        <add id="AnyPlaceMedia_SendSMS::history" title="Historic" module="AnyPlaceMedia_SendSMS" sortOrder="10" action="sendsms/history" resource="AnyPlaceMedia_SendSMS::history" parent="AnyPlaceMedia_SendSMS::main"/>
+        <add id="AnyPlaceMedia_SendSMS::campaign" title="Campaign" module="AnyPlaceMedia_SendSMS" sortOrder="10" action="sendsms/campaign" resource="AnyPlaceMedia_SendSMS::campaign" parent="AnyPlaceMedia_SendSMS::main"/>
+        <add id="AnyPlaceMedia_SendSMS::test" title="Test" module="AnyPlaceMedia_SendSMS" sortOrder="10" action="sendsms/test" resource="AnyPlaceMedia_SendSMS::test" parent="AnyPlaceMedia_SendSMS::main"/>
+    </menu>
+</config>

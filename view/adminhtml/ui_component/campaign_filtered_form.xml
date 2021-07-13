@@ -1,0 +1,67 @@
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">campaign_filtered_form.campaign_filtered_form_data_source</item>
+            <item name="deps" xsi:type="string">campaign_filtered_form.campaign_filtered_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Campaign</item>
+        <item name="layout" xsi:type="array">
+            <item name="type" xsi:type="string">tabs</item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">AnyPlaceMedia\SendSMS\Block\BackButton</item>
+            <item name="save" xsi:type="string">AnyPlaceMedia\SendSMS\Block\SendButton</item>
+            <item name="check" xsi:type="string">AnyPlaceMedia\SendSMS\Block\CheckButton</item>
+        </item>
+    </argument>
+    <dataSource name="campaign_filtered_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">AnyPlaceMedia\SendSMS\Model\Campaign</argument>
+            <argument name="name" xsi:type="string">campaign_filtered_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">entity_id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+    <fieldset name="campaign_filtered_form">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Send SMS</item>
+            </item>
+        </argument>
+
+        <!-- This field represents form id and is hidden -->
+        <field name="entity_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="visible" xsi:type="boolean">false</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="message">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Message</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="source" xsi:type="string">campaign</item>
+                    <item name="additionalClasses" xsi:type="string">sendsms-char-count-filtered</item>
+                    <item name="notice" xsi:type="string">The field is empty</item>
+                    <item name="maxlength" xsi:type="string">10</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="string">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>

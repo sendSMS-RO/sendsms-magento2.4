@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles" />
+    <update handle="editor" />
+    <head>
+        <title>Campaign - Filtered</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="AnyPlaceMedia\SendSMS\Block\ShowPhones" name="show_phones" template="AnyPlaceMedia_SendSMS::show_phones.phtml"/>
+            <uiComponent name="campaign_filtered_form" />
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="sendsmsjs" template="AnyPlaceMedia_SendSMS::js.phtml" />
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="AnyPlaceMedia\SendSMS\Model\ResourceModel\History\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">sendsms_history</argument>
+            <argument name="resourceModel" xsi:type="string">AnyPlaceMedia\SendSMS\Model\ResourceModel\History</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="sendsms_history_grid_data_source" xsi:type="string">AnyPlaceMedia\SendSMS\Model\ResourceModel\History\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
