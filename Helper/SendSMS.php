@@ -74,7 +74,7 @@ class SendSMS extends AbstractHelper
             curl_setopt($curl, CURLOPT_HEADER, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_URL, 'https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode(trim($password)) . '&from=' . urlencode($from) . '&to=' . urlencode($phone) . '&text=' . urlencode($message) . '&short=' . ($short ? 'true' : 'false'));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
+            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Connection: keep-alive"]);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
             $status = curl_exec($curl);
@@ -100,10 +100,12 @@ class SendSMS extends AbstractHelper
                 ->addFieldToFilter('path', ['in' => ['sendsms_settings/sendsms/sendsms_settings_price', 'sendsms_settings/sendsms/sendsms_settings_price_date']])
                 ->getData();
             foreach ($configs as $config) {
-                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price')
+                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price') {
                     $price = $config['value'];
-                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price_date')
+                }
+                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price_date') {
                     $priceTime = $config['value'];
+                }
             }
             if (empty($priceTime) || empty($price) || $priceTime < date('Y-m-d H:i:s')) {
                 $this->routeCheckPrice($phone);
@@ -165,7 +167,7 @@ class SendSMS extends AbstractHelper
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLINFO_HEADER_OUT, true);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
+            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Connection: keep-alive"]);
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
@@ -212,7 +214,7 @@ class SendSMS extends AbstractHelper
             curl_setopt($curl, CURLOPT_HEADER, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_URL, 'http://api.sendsms.ro/json?action=route_check_price&username=' . urlencode($username) . '&password=' . urlencode($password) . '&to=' . urlencode($to));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
+            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Connection: keep-alive"]);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
             $status = curl_exec($curl);
@@ -251,7 +253,7 @@ class SendSMS extends AbstractHelper
             curl_setopt($curl, CURLOPT_HEADER, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_URL, 'http://api.sendsms.ro/json?action=user_get_balance&username=' . urlencode($username) . '&password=' . urlencode($password));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
+            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Connection: keep-alive"]);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
             $status = curl_exec($curl);
@@ -268,7 +270,9 @@ class SendSMS extends AbstractHelper
      */
     public function validatePhone($phone_number)
     {
-        if (empty($phone_number)) return '';
+        if (empty($phone_number)) {
+            return '';
+        }
         $phone_number = $this->clearPhoneNumber($phone_number);
         //Strip out leading zeros:
         //this will check the country code and apply it if needed
@@ -302,7 +306,7 @@ class SendSMS extends AbstractHelper
      */
     public function cleanDiacritice($string)
     {
-        $bad = array(
+        $bad = [
             "\xC4\x82",
             "\xC4\x83",
             "\xC3\x82",
@@ -320,8 +324,8 @@ class SendSMS extends AbstractHelper
             "\xC3\xA3",
             "\xC2\xAD",
             "\xe2\x80\x93"
-        );
-        $cleanLetters = array("A", "a", "A", "a", "I", "i", "S", "s", "T", "t", "S", "s", "T", "t", "a", " ", "-");
+        ];
+        $cleanLetters = ["A", "a", "A", "a", "I", "i", "S", "s", "T", "t", "S", "s", "T", "t", "a", " ", "-"];
         return str_replace($bad, $cleanLetters, $string);
     }
 }

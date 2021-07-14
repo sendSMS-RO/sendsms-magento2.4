@@ -16,5 +16,4 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         $this->_init('AnyPlaceMedia\SendSMS\Model\History', 'AnyPlaceMedia\SendSMS\Model\ResourceModel\History');
     }
-
 }

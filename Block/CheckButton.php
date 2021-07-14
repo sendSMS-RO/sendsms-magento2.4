@@ -5,6 +5,7 @@ namespace AnyPlaceMedia\SendSMS\Block;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Store;
+
 /**
  * Class SaveButton
  */
@@ -24,9 +25,9 @@ class CheckButton extends GenericButton implements ButtonProviderInterface
                 ->addFieldToFilter('scope_id', Store::DEFAULT_STORE_ID)
                 ->addFieldToFilter('path', ['in' => ['sendsms_settings/sendsms/sendsms_settings_price']])
                 ->getData();
-                if(!empty($configs)) {
-                    $price = $configs[0]['value'];
-                }
+            if (!empty($configs)) {
+                $price = $configs[0]['value'];
+            }
         }
         return [
             'label' => __('Check price'),

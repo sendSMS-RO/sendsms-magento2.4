@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace AnyPlaceMedia\SendSMS\Block\Adminhtml\Form\Field;
@@ -45,7 +46,8 @@ class StatusColumn extends Select
     private function getSourceOptions(): array
     {
         $manager = \Magento\Framework\App\ObjectManager::getInstance();
-        $statuses = $manager->create('Magento\Sales\Model\ResourceModel\Order\Status\Collection')->toOptionArray();
+        $statuses = $manager->create('\Magento\Sales\Model\ResourceModel\Order\Status\Collection::class')
+            ->toOptionArray();
         return $statuses;
     }
 }

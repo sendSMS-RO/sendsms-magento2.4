@@ -20,7 +20,7 @@ class Prefix implements \Magento\Framework\Option\ArrayInterface
      */
     public function toOptionArray()
     {
-        $output = array();
+        $output = [];
         $output[] = ['value' => 'INT', 'label' => "International"];
         foreach ($this->country_codes as $key => $value) {
             $output[] = ['value' => $value, 'label' => "$key ($value)"];
@@ -35,7 +35,7 @@ class Prefix implements \Magento\Framework\Option\ArrayInterface
      */
     public function toArray()
     {
-        $output = array();
+        $output = [];
         $output["INT"] = "International";
         foreach ($this->country_codes as $key => $value) {
             $output[$value] = "$key ($value)";
@@ -43,7 +43,7 @@ class Prefix implements \Magento\Framework\Option\ArrayInterface
         return $output;
     }
 
-    private $country_codes = array(
+    private $country_codes = [
         'AC' => '247',
         'AD' => '376',
         'AE' => '971',
@@ -310,5 +310,5 @@ class Prefix implements \Magento\Framework\Option\ArrayInterface
         'ZA' => '27',
         'ZM' => '260',
         'ZW' => '263',
-    );
+    ];
 }

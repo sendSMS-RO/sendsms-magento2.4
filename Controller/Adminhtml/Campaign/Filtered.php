@@ -79,12 +79,21 @@ class Filtered extends \Magento\Backend\App\Action
         }
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
+        $resource = $objectManager->get('\Magento\Framework\App\ResourceConnection::class');
         $connection = $resource->getConnection();
         if (!empty($product)) {
-            $sql = 'SELECT DISTINCT soa.telephone FROM ' . $resource->getTableName('sales_order') . ' AS so, ' . $resource->getTableName('sales_order_item') . ' AS soi, ' . $resource->getTableName('sales_order_address') . ' AS soa WHERE soa.parent_id = so.entity_id AND soi.order_id = so.entity_id AND so.state = \'complete\' AND ' . implode(' AND ', $where);
+            $sql = 'SELECT DISTINCT soa.telephone FROM '
+                . $resource->getTableName('sales_order') . ' AS so, '
+                . $resource->getTableName('sales_order_item') . ' AS soi, '
+                . $resource->getTableName('sales_order_address')
+                . ' AS soa WHERE soa.parent_id = so.entity_id AND soi.order_id = so.entity_id AND so.state = \'complete\' AND '
+                . implode(' AND ', $where);
         } else {
-            $sql = 'SELECT DISTINCT soa.telephone FROM ' . $resource->getTableName('sales_order') . ' AS so, ' . $resource->getTableName('sales_order_address') . ' AS soa WHERE soa.parent_id = so.entity_id AND so.state = \'complete\'' . (count($where) ? ' AND ' . implode(' AND ', $where) : '');
+            $sql = 'SELECT DISTINCT soa.telephone FROM '
+                . $resource->getTableName('sales_order') . ' AS so, '
+                . $resource->getTableName('sales_order_address')
+                . ' AS soa WHERE soa.parent_id = so.entity_id AND so.state = \'complete\''
+                . (count($where) ? ' AND ' . implode(' AND ', $where) : '');
         }
         $results = $connection->fetchAll($sql, $binds);
         # send collection to registry
@@ -101,9 +110,9 @@ class Filtered extends \Magento\Backend\App\Action
             }
             # redirect back
             $resultRedirect = $this->resultRedirectFactory->create();
-            return $resultRedirect->setPath('*/*/index', array(
-                '_query' => array('sent' => 1)
-            ));
+            return $resultRedirect->setPath('*/*/index', [
+                '_query' => ['sent' => 1]
+            ]);
         }
         $this->_coreRegistry->register('phonesno', count($results));
 
