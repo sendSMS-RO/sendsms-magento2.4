@@ -7,7 +7,7 @@
             <label for="sendsms_phone" class="admin__field-label"><?= $block->escapeHtml(__('Phone number')) ?></label>
             <div class="admin__field-control">
                 <select name="sendsms[phone]" id="sendsms_phone" class="admin__control-select">
-                    <?php foreach ($block->getPhones() as $_code => $_label): ?>
+                    <?php foreach ($block->getPhones() as $_code => $_label) : ?>
                         <option value="<?= $block->escapeHtmlAttr($_code) ?>">
                             <?= $block->escapeHtml($_label) ?>
                         </option>

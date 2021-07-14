@@ -8,7 +8,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Shipping\Helper\Data as ShippingHelper;
 use Magento\Tax\Helper\Data as TaxHelper;
 
-class SendSMS extends \Magento\Backend\Block\Widget
+class SendSMS extends  \Magento\Backend\Block\Widget
 {
     /**
      * Core registry
@@ -92,12 +92,12 @@ class SendSMS extends \Magento\Backend\Block\Widget
     {
         $order = $this->getOrder();
         if ($order) {
-            return array_unique([
+            return array_unique(array(
                 $order->getBillingAddress()->getTelephone(),
                 $order->getShippingAddress()->getTelephone()
-            ]);
+            ));
         }
-        return [];
+        return array();
     }
 
     /**

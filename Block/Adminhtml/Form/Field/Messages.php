@@ -54,6 +54,7 @@ class Messages extends AbstractFieldArray
             'renderer' => $this->getShortRenderer(),
         ]);
 
+
         $this->_addAfter = false;
         $this->_addButtonLabel = __('Add');
     }

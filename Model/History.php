@@ -217,4 +217,5 @@ class History extends \Magento\Framework\Model\AbstractModel implements HistoryI
     {
         return $this->setData(self::PHONE, $phone);
     }
+
 }

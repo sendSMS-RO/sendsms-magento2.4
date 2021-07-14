@@ -24,9 +24,9 @@ class Index extends \Magento\Backend\App\Action
         $postData = $this->getRequest()->getParam('campaign_form');
         if (is_array($postData)) {
             $resultRedirect = $this->resultRedirectFactory->create();
-            return $resultRedirect->setPath('*/*/filtered', [
+            return $resultRedirect->setPath('*/*/filtered', array(
                 '_query' => $postData
-            ]);
+            ));
         }
 
         $message = $this->getRequest()->getParam('sent');

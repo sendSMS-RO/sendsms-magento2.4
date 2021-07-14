@@ -70,12 +70,12 @@ class OrderSave implements ObserverInterface
         $shippingAddress = $order->getShippingAddress()->getData();
         $formattedPrice = $this->pricingHelper->currency($order->getGrandTotal(), true, false);
         $tracksCollection = $order->getTracksCollection();
-        $trackNumbers = [];
+        $trackNumbers = array();
         foreach ($tracksCollection->getItems() as $track) {
             $trackNumbers[] = $track->getTrackNumber();
         }
         $trackingNumbers = implode(", ", $trackNumbers);
-        $replace = [
+        $replace = array(
             '{billing_first_name}' => $this->helper->cleanDiacritice($billingAddress['firstname']),
             '{billing_last_name}' => $this->helper->cleanDiacritice($billingAddress['lastname']),
             '{shipping_first_name}' => $this->helper->cleanDiacritice($shippingAddress['firstname']),
@@ -84,7 +84,7 @@ class OrderSave implements ObserverInterface
             '{order_date}' => date('d.m.Y', strtotime($order->getCreatedAt())),
             '{order_total}' => $formattedPrice,
             '{tracking_numbers}' => $trackingNumbers
-        ];
+        );
         foreach ($replace as $key => $value) {
             $message = str_replace($key, $value, $message);
         }
