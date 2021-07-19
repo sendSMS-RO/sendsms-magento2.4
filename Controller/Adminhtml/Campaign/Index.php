@@ -1,4 +1,5 @@
 <?php
+
 namespace AnyPlaceMedia\SendSMS\Controller\Adminhtml\Campaign;
 
 class Index extends \Magento\Backend\App\Action
@@ -24,14 +25,17 @@ class Index extends \Magento\Backend\App\Action
         $postData = $this->getRequest()->getParam('campaign_form');
         if (is_array($postData)) {
             $resultRedirect = $this->resultRedirectFactory->create();
-            return $resultRedirect->setPath('*/*/filtered', array(
+            return $resultRedirect->setPath('*/*/filtered', [
                 '_query' => $postData
-            ));
+            ]);
         }
 
         $message = $this->getRequest()->getParam('sent');
         if (!empty($message)) {
-            $messageBlock = $resultPage->getLayout()->createBlock('Magento\Framework\View\Element\Messages', 'answer');
+            $messageBlock = $resultPage->getLayout()->createBlock(
+                \Magento\Framework\View\Element\Messages::class,
+                'answer'
+            );
             $messageBlock->addSuccess('The messages have been sent.');
             $resultPage->getLayout()->setChild('sendsms_messages', $messageBlock->getNameInLayout(), 'answer_alias');
         }

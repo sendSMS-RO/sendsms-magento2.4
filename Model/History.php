@@ -37,7 +37,7 @@ class History extends \Magento\Framework\Model\AbstractModel implements HistoryI
      */
     protected function _construct()
     {
-        $this->_init('AnyPlaceMedia\SendSMS\Model\ResourceModel\History');
+        $this->_init(\AnyPlaceMedia\SendSMS\Model\ResourceModel\History::class);
     }
 
     /**
@@ -217,5 +217,4 @@ class History extends \Magento\Framework\Model\AbstractModel implements HistoryI
     {
         return $this->setData(self::PHONE, $phone);
     }
-
 }

@@ -15,11 +15,10 @@ class Balance extends AbstractBlock implements CommentInterface
     public function getCommentText($elementValue)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $helper = $objectManager->get('AnyPlaceMedia\SendSMS\Helper\SendSMS');
-        if($helper->getBalance()) {
-            if($helper->getBalance()['status'] == 0)
-            {
-                return "You have " . $helper->getBalance()['details'] . " euro in your account"; 
+        $helper = $objectManager->get(\AnyPlaceMedia\SendSMS\Helper\SendSMS::class);
+        if ($helper->getBalance()) {
+            if ($helper->getBalance()['status'] == 0) {
+                return "You have " . $helper->getBalance()['details'] . " euro in your account";
             }
         }
         return "Please configure your module first";

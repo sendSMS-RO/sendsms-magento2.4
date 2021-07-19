@@ -1,3 +1,5 @@
+<?php ?>
+
 <script type="text/javascript">
     require(
         ['jquery'],
@@ -37,7 +39,9 @@
             } else {
                 messages = 0;
             }
-            alert("The estimate price is of " + parseFloat(Math.floor(messages) * price * phonesno).toPrecision(4) + " euro.")
+            alert("The estimate price is of " +
+                parseFloat(Math.floor(messages) * price * phonesno).toPrecision(4) +
+                " euro.")
         }
     }
 </script>

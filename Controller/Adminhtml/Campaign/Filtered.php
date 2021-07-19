@@ -6,9 +6,11 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Registry;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Setup\Declaration\Schema\Dto\Factories\Unique;
 
 class Filtered extends \Magento\Backend\App\Action
 {
+    protected $collectionFactory;
 
     protected $resultPageFactory;
 
@@ -20,11 +22,13 @@ class Filtered extends \Magento\Backend\App\Action
         Context $context,
         PageFactory $pageFactory,
         Registry $coreRegistry,
-        JsonFactory $resultJsonFactory
+        JsonFactory $resultJsonFactory,
+        \Magento\Sales\Model\ResourceModel\Order\Collectionfactory $collectionFactory
     ) {
         $this->resultPageFactory = $pageFactory;
         $this->_coreRegistry = $coreRegistry;
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->collectionFactory = $collectionFactory;
         parent::__construct($context);
     }
 
@@ -38,57 +42,15 @@ class Filtered extends \Magento\Backend\App\Action
         $endDate = $this->getRequest()->getParam('end_date');
         $minSum = $this->getRequest()->getParam('min_sum');
         $product = $this->getRequest()->getParam('product');
-        $county = $this->getRequest()->getParam('county');
-
-        # do query to get phone numbers
-        $where = [];
-        $binds = [];
-        if (!empty($startDate)) {
-            $startDate = date('Y-m-d', strtotime($startDate));
-            $where[] = 'so.created_at >= :START_DATE';
-            $binds['START_DATE'] = $startDate . ' 00:00:00';
-        }
-        if (!empty($endDate)) {
-            $endDate = date('Y-m-d', strtotime($endDate));
-            $where[] = 'so.created_at <= :END_DATE';
-            $binds['END_DATE'] = $endDate . ' 23:59:59';
-        }
-        if (!empty($minSum)) {
-            $where[] = 'so.base_grand_total >= :MIN_SUM';
-            $binds['MIN_SUM'] = $minSum;
-        }
-        if (!empty($product)) {
-            $in = '';
-            foreach ($product as $pd) {
-                $in .= '\'' . (int)$pd . '\', ';
-            }
-            if (!empty($in)) {
-                $in = substr($in, 0, -2);
-            }
-            $where[] = "soi.product_id IN ($in)";
-        }
-        if (!empty($county)) {
-            $in = '';
-            foreach ($county as $ct) {
-                $in .= '\'' . strip_tags($ct) . '\', ';
-            }
-            if (!empty($in)) {
-                $in = substr($in, 0, -2);
-            }
-            $where[] = "soa.region IN ($in)";
-        }
+        $country = $this->getRequest()->getParam('county');
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        if (!empty($product)) {
-            $sql = 'SELECT DISTINCT soa.telephone FROM ' . $resource->getTableName('sales_order') . ' AS so, ' . $resource->getTableName('sales_order_item') . ' AS soi, ' . $resource->getTableName('sales_order_address') . ' AS soa WHERE soa.parent_id = so.entity_id AND soi.order_id = so.entity_id AND so.state = \'complete\' AND ' . implode(' AND ', $where);
-        } else {
-            $sql = 'SELECT DISTINCT soa.telephone FROM ' . $resource->getTableName('sales_order') . ' AS so, ' . $resource->getTableName('sales_order_address') . ' AS soa WHERE soa.parent_id = so.entity_id AND so.state = \'complete\'' . (count($where) ? ' AND ' . implode(' AND ', $where) : '');
-        }
-        $results = $connection->fetchAll($sql, $binds);
-        # send collection to registry
-        $registry = $objectManager->get('Magento\Framework\Registry');
+        $resource = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+
+        $results = $this->getOrderPhones($startDate, $endDate, $minSum, $product, $country, $resource);
+
+        $registry = $objectManager->get(\Magento\Framework\Registry::class);
+
         $registry->register('sendsms_filters', $results);
 
         if (is_array($postData)) {
@@ -96,23 +58,64 @@ class Filtered extends \Magento\Backend\App\Action
             $phones = $results;
             if (!empty($message) && count($phones)) {
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                $helper = $objectManager->get('AnyPlaceMedia\SendSMS\Helper\SendSMS');
+                $helper = $objectManager->get(\AnyPlaceMedia\SendSMS\Helper\SendSMS::class);
                 $helper->batchCreate($phones, $message);
             }
             # redirect back
             $resultRedirect = $this->resultRedirectFactory->create();
-            return $resultRedirect->setPath('*/*/index', array(
-                '_query' => array('sent' => 1)
-            ));
+            return $resultRedirect->setPath('*/*/index', [
+                '_query' => ['sent' => 1]
+            ]);
         }
         $this->_coreRegistry->register('phonesno', count($results));
 
         return $this->resultPageFactory->create();
     }
 
-    public function checkPrice()
+    /**
+     * Return phone of each order
+     *
+     * @return Countable|array
+     */
+    public function getOrderPhones($startDate, $endDate, $minSum, $product, $country, $resource)
     {
-        error_log("#232");
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToSelect('entity_id');
+        $collection->getSelect()->join(
+            $resource->getTableName('sales_order_item'),
+            'main_table.entity_id=' . $resource->getTableName('sales_order_item') . '.order_id',
+            ''
+        );
+        $collection->getSelect()->join(
+            $resource->getTableName('sales_order_address'),
+            'main_table.entity_id=' . $resource->getTableName('sales_order_address') . '.parent_id',
+            'telephone'
+        );
+        $collection->addFieldToFilter('status', 'complete');
+        if (!empty($startDate)) {
+            $startDate = date('Y-m-d', strtotime($startDate)) . ' 00:00:00';
+            $collection->addFieldToFilter('created_at', ['gteq' => $startDate]);
+        }
+        if (!empty($endDate)) {
+            $endDate = date('Y-m-d', strtotime($endDate)) . ' 23:59:59';
+            $collection->addFieldToFilter('created_at', ['lteq' => $endDate]);
+        }
+        if (!empty($minSum)) {
+            $collection->addFieldToFilter('base_grand_total', ['gteq' => $minSum]);
+        }
+        if (!empty($product)) {
+            $collection->addFieldToFilter('product_id', ['in' => $product]);
+        }
+        if (!empty($country)) {
+            $collection->addFieldToFilter('region', ['in' => $country]);
+        }
+        $data = $collection->getData();
+        $uniquePhones = [];
+        foreach ($data as $d) {
+            $uniquePhones[] = $d['telephone'];
+        }
+        $uniquePhones = array_unique($uniquePhones);
+        return $uniquePhones;
     }
 
     /*

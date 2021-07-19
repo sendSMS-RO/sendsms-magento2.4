@@ -107,7 +107,6 @@ class Index extends \Magento\Backend\App\Action implements HttpPostActionInterfa
         parent::__construct($context);
     }
 
-
     /**
      * Send a SMS to the client
      *
@@ -126,12 +125,14 @@ class Index extends \Magento\Backend\App\Action implements HttpPostActionInterfa
                 $phone = $phones[$vars['phone']];
                 $gdpr = false;
                 $short = false;
-                if (isset($vars['gdpr']))
+                if (isset($vars['gdpr'])) {
                     $gdpr = $vars['gdpr'] == 1 ? true : false;
-                if (isset($vars['short']))
+                }
+                if (isset($vars['short'])) {
                     $short = $vars['short'] == 1 ? true : false;
+                }
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                $helper = $objectManager->get('AnyPlaceMedia\SendSMS\Helper\SendSMS');
+                $helper = $objectManager->get(\AnyPlaceMedia\SendSMS\Helper\SendSMS::class);
                 $helper->sendSMS($phone, $message, 'campaign', $gdpr, $short);
                 $response = ['error' => false, 'message' => __('Message send')];
             }
@@ -170,11 +171,11 @@ class Index extends \Magento\Backend\App\Action implements HttpPostActionInterfa
     public function getPhones($order)
     {
         if ($order) {
-            return array_unique(array(
+            return array_unique([
                 $order->getBillingAddress()->getTelephone(),
                 $order->getShippingAddress()->getTelephone()
-            ));
+            ]);
         }
-        return array();
+        return [];
     }
 }

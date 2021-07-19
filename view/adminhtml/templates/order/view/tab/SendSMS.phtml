@@ -7,7 +7,7 @@
             <label for="sendsms_phone" class="admin__field-label"><?= $block->escapeHtml(__('Phone number')) ?></label>
             <div class="admin__field-control">
                 <select name="sendsms[phone]" id="sendsms_phone" class="admin__control-select">
-                    <?php foreach ($block->getPhones() as $_code => $_label) : ?>
+                    <?php foreach ($block->getPhones() as $_code => $_label): ?>
                         <option value="<?= $block->escapeHtmlAttr($_code) ?>">
                             <?= $block->escapeHtml($_label) ?>
                         </option>
@@ -18,26 +18,36 @@
 
         <div class="admin__field">
             <div class="admin__field admin__field-option">
-                <input name="sendsms[short]" type="checkbox" id="sendsms_short" class="admin__control-checkbox" value="1" />
+                <input name="sendsms[short]" type="checkbox" id="sendsms_short" class="admin__control-checkbox" 
+                    value="1" />
                 <label class="admin__field-label" for="sendsms_short">
-                    <?= $block->escapeHtml(__('Short url? (Please use only urls that start with https:// or http://)')) ?>
+                    <?= $block->escapeHtml(
+                        __('Short url? (Please use only urls that start with https:// or http://)')
+                    ) ?>
                 </label>
             </div>
 
             <div class="admin__field admin__field-option">
-                <input name="sendsms[gdpr]" type="checkbox" id="sendsms_gdpr" class="admin__control-checkbox" value="1" />
+                <input name="sendsms[gdpr]" type="checkbox" id="sendsms_gdpr" class="admin__control-checkbox" 
+                    value="1" />
                 <label class="admin__field-label" for="sendsms_gdpr">
-                    <?= $block->escapeHtml(__('Add an unsubscribe link? (You must specify {gdpr} key message. {gdpr} key will be replaced automaticaly with confirmation unique confirmation link. If {gdpr} key is not specified confirmation link will be placed at the end of message.)')) ?>
+                    <?= $block->escapeHtml(
+                        __('Add an unsubscribe link? (You must specify {gdpr} key message.') .
+                        __('{gdpr} key will be replaced automaticaly with confirmation unique confirmation link.') .
+                        __('If {gdpr} key is not specified confirmation link will be placed at the end of message.)')
+                    ) ?>
                 </label>
             </div>
         </div>
-        
+
         <div class="admin__field">
             <label for="sendsms_message" class="admin__field-label">
                 <?= $block->escapeHtml(__('Message')) ?>
             </label>
             <div class="admin__field-control">
-                <textarea name="sendsms[message]" rows="3" cols="5" id="sendsms_message" class="admin__control-textarea sendsms-char-count"></textarea>
+                <textarea name="sendsms[message]" rows="3" cols="5" id="sendsms_message" 
+                    class="admin__control-textarea sendsms-char-count">
+                </textarea>
             </div>
         </div>
         <br />

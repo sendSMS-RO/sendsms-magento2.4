@@ -4,9 +4,6 @@ namespace AnyPlaceMedia\SendSMS\Block;
 
 use Magento\Search\Controller\RegistryConstants;
 
-/**
- * Class GenericButton
- */
 class GenericButton
 {
     /**

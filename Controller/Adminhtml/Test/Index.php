@@ -27,7 +27,6 @@ class Index extends \Magento\Backend\App\Action
         $gdpr = $this->getRequest()->getParam('gdpr');
         $short = $this->getRequest()->getParam('short');
 
-
         if (!empty($phone) && !empty($message)) {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $helper = $objectManager->get('AnyPlaceMedia\SendSMS\Helper\SendSMS');

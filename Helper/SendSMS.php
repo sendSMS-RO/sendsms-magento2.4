@@ -18,6 +18,7 @@ class SendSMS extends AbstractHelper
     protected $storeManager;
     protected $filesystem;
     protected $directory;
+    protected $curl;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -26,7 +27,8 @@ class SendSMS extends AbstractHelper
         \Magento\Framework\App\Config\ConfigResource\ConfigInterface $resourceConfig,
         \Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory $collectionFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\Filesystem $filesystem
+        \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\HTTP\Client\Curl $curl
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeDate = $date;
@@ -36,6 +38,7 @@ class SendSMS extends AbstractHelper
         $this->storeManager = $storeManager;
         $this->filesystem = $filesystem;
         $this->directory = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        $this->curl = $curl;
     }
 
     /**
@@ -70,16 +73,24 @@ class SendSMS extends AbstractHelper
         $phone = $this->validatePhone($phone);
 
         if (!empty($phone) && !empty($username) && !empty($password)) {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_URL, 'https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "") . '&username=' . urlencode($username) . '&password=' . urlencode(trim($password)) . '&from=' . urlencode($from) . '&to=' . urlencode($phone) . '&text=' . urlencode($message) . '&short=' . ($short ? 'true' : 'false'));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $url = 'https://api.sendsms.ro/json?action=message_send' . ($gdpr ? "_gdpr" : "")
+                . '&username=' . urlencode($username)
+                . '&password=' . urlencode(trim($password))
+                . '&from=' . urlencode($from)
+                . '&to=' . urlencode($phone)
+                . '&text=' . urlencode($message)
+                . '&short=' . ($short ? 'true' : 'false');
 
-            $status = curl_exec($curl);
-            $status = json_decode($status, true);
-            curl_close($curl);
+            $this->curl->setOption(CURLOPT_HEADER, 0);
+            $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+            $this->curl->setOption(CURLOPT_CUSTOMREQUEST, 'GET');
+            $this->curl->setOption(CURLOPT_RETURNTRANSFER, '1');
+            //set curl header
+            $this->curl->addHeader("Content-Type", "application/json");
+            //get request with url
+            $this->curl->get($url);
+            //read response
+            $status = json_decode($this->curl->getBody(), true);
 
             # add to history
             $history = $this->history->create();
@@ -97,13 +108,23 @@ class SendSMS extends AbstractHelper
             $configs = $this->collection
                 ->addFieldToFilter('scope', ScopeConfigInterface::SCOPE_TYPE_DEFAULT)
                 ->addFieldToFilter('scope_id', Store::DEFAULT_STORE_ID)
-                ->addFieldToFilter('path', ['in' => ['sendsms_settings/sendsms/sendsms_settings_price', 'sendsms_settings/sendsms/sendsms_settings_price_date']])
+                ->addFieldToFilter(
+                    'path',
+                    [
+                        'in' => [
+                            'sendsms_settings/sendsms/sendsms_settings_price',
+                            'sendsms_settings/sendsms/sendsms_settings_price_date'
+                        ]
+                    ]
+                )
                 ->getData();
             foreach ($configs as $config) {
-                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price')
+                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price') {
                     $price = $config['value'];
-                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price_date')
+                }
+                if ($config['path'] === 'sendsms_settings/sendsms/sendsms_settings_price_date') {
                     $priceTime = $config['value'];
+                }
             }
             if (empty($priceTime) || empty($price) || $priceTime < date('Y-m-d H:i:s')) {
                 $this->routeCheckPrice($phone);
@@ -129,7 +150,6 @@ class SendSMS extends AbstractHelper
             $filepath = 'sendsms/batch.csv';
             $this->directory->create('sendsms');
             $stream = $this->directory->openFile($filepath, 'w+');
-            // $stream->lock();
 
             $header = ['message', 'to', 'from'];
             $stream->writeCsv($header);
@@ -137,49 +157,38 @@ class SendSMS extends AbstractHelper
             foreach ($phones as $phone) {
                 $data = [];
                 $data[] = $message;
-                $data[] = $this->validatePhone($phone['telephone']);
+                $data[] = $this->validatePhone($phone);
                 $data[] = $from;
                 $stream->writeCsv($data);
             }
 
             $name = 'Magento - ' . $this->storeManager->getStore()->getName() . ' - ' . uniqid();
 
-            $file_type = "csv";
             $url = "https://api.sendsms.ro/json";
 
+            // $start_time = "2970-01-01 02:00:00";
             $start_time = "";
-            $curl = curl_init();
-
             $url = $url . "?action=batch_create";
             $url .= "&username=" . urlencode($username);
             $url .= "&password=" . urlencode($password);
             $url .= "&name=" . urlencode($name);
-            $url .= "&file_type=" . urlencode($file_type);
 
-            if (!is_null($start_time)) {
+            if (empty($start_time)) {
                 $url .= "&start_time=" . urlencode($start_time);
             }
+            $readableFile = $this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->openFile('sendsms/batch.csv');
+            $data = 'data=' . urlencode($readableFile->readAll());
+            $readableFile->close();
+            unset($stream);
+            $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+            $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
 
-            $data = 'data=' . urlencode($this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->openFile('sendsms/batch.csv')->readAll());
-            curl_setopt($curl, CURLOPT_HEADER, 1);
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($curl, CURLINFO_HEADER_OUT, true);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
-            curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            $this->curl->post($url, $data);
 
-            $result = curl_exec($curl);
+            $response = $this->curl->getBody();
+            $result = json_decode($response, true);
 
-            if ($result === false) {
-                error_log(curl_error($curl) . ' - ' . curl_errno($curl));
-            }
-
-            $size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-
-            $result = json_decode(substr($result, $size), true);
             $this->directory->delete($filepath);
-            curl_close($curl);
 
             # add to history
             $history = $this->history->create();
@@ -208,16 +217,21 @@ class SendSMS extends AbstractHelper
         );
 
         if (!empty($username) && !empty($password)) {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_URL, 'http://api.sendsms.ro/json?action=route_check_price&username=' . urlencode($username) . '&password=' . urlencode($password) . '&to=' . urlencode($to));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $url = 'http://api.sendsms.ro/json?action=route_check_price&username=' . urlencode($username)
+                . '&password=' . urlencode($password)
+                . '&to=' . urlencode($to);
 
-            $status = curl_exec($curl);
-            $status = json_decode($status, true);
-            curl_close($curl);
+            $this->curl->setOption(CURLOPT_HEADER, 0);
+            $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+            $this->curl->setOption(CURLOPT_CUSTOMREQUEST, 'GET');
+            $this->curl->setOption(CURLOPT_RETURNTRANSFER, '1');
+            //set curl header
+            $this->curl->addHeader("Content-Type", "application/json");
+            //get request with url
+            $this->curl->get($url);
+            //read response
+            $status = json_decode($this->curl->getBody(), true);
+
             if ($status['details']['status'] === 64) {
                 $this->resourceConfig->saveConfig(
                     'sendsms_settings/sendsms/sendsms_settings_price',
@@ -247,16 +261,19 @@ class SendSMS extends AbstractHelper
         );
 
         if (!empty($username) && !empty($password)) {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_URL, 'http://api.sendsms.ro/json?action=user_get_balance&username=' . urlencode($username) . '&password=' . urlencode($password));
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $url = 'http://api.sendsms.ro/json?action=user_get_balance&username=' . urlencode($username)
+                . '&password=' . urlencode($password);
 
-            $status = curl_exec($curl);
-            $status = json_decode($status, true);
-            curl_close($curl);
+            $this->curl->setOption(CURLOPT_HEADER, 0);
+            $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+            $this->curl->setOption(CURLOPT_CUSTOMREQUEST, 'GET');
+            $this->curl->setOption(CURLOPT_RETURNTRANSFER, '1');
+            //set curl header
+            $this->curl->addHeader("Content-Type", "application/json");
+            //get request with url
+            $this->curl->get($url);
+            //read response
+            $status = json_decode($this->curl->getBody(), true);
             return $status;
         }
         return false;
@@ -268,7 +285,9 @@ class SendSMS extends AbstractHelper
      */
     public function validatePhone($phone_number)
     {
-        if (empty($phone_number)) return '';
+        if (empty($phone_number)) {
+            return '';
+        }
         $phone_number = $this->clearPhoneNumber($phone_number);
         //Strip out leading zeros:
         //this will check the country code and apply it if needed
@@ -288,7 +307,7 @@ class SendSMS extends AbstractHelper
         return $phone_number;
     }
 
-    function clearPhoneNumber($phone_number)
+    public function clearPhoneNumber($phone_number)
     {
         $phone_number = str_replace(['+', '-'], '', filter_var($phone_number, FILTER_SANITIZE_NUMBER_INT));
         //Strip spaces and non-numeric characters:
@@ -302,7 +321,7 @@ class SendSMS extends AbstractHelper
      */
     public function cleanDiacritice($string)
     {
-        $bad = array(
+        $bad = [
             "\xC4\x82",
             "\xC4\x83",
             "\xC3\x82",
@@ -320,8 +339,8 @@ class SendSMS extends AbstractHelper
             "\xC3\xA3",
             "\xC2\xAD",
             "\xe2\x80\x93"
-        );
-        $cleanLetters = array("A", "a", "A", "a", "I", "i", "S", "s", "T", "t", "S", "s", "T", "t", "a", " ", "-");
+        ];
+        $cleanLetters = ["A", "a", "A", "a", "I", "i", "S", "s", "T", "t", "S", "s", "T", "t", "a", " ", "-"];
         return str_replace($bad, $cleanLetters, $string);
     }
 }

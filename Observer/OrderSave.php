@@ -10,7 +10,6 @@ use Magento\Framework\Event\Observer;
  *
  * Watch for order status change
  *
- * @package AnyPlaceMedia\SendSMS\Observer
  */
 class OrderSave implements ObserverInterface
 {
@@ -40,10 +39,11 @@ class OrderSave implements ObserverInterface
 
         $order = $observer->getEvent()->getOrder();
         $status = $order->getStatus();
-        $text = $objectManager->get('Magento\Framework\Serialize\SerializerInterface')->unserialize($this->scopeConfig->getValue(
-            'sendsms_settings/sendsms/sendsms_settings_messages',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        ));
+        $text = $objectManager->get(\Magento\Framework\Serialize\SerializerInterface::class)
+            ->unserialize($this->scopeConfig->getValue(
+                'sendsms_settings/sendsms/sendsms_settings_messages',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ));
 
         foreach ($text as $config) {
             if ($status == $config['status']) {
@@ -70,12 +70,12 @@ class OrderSave implements ObserverInterface
         $shippingAddress = $order->getShippingAddress()->getData();
         $formattedPrice = $this->pricingHelper->currency($order->getGrandTotal(), true, false);
         $tracksCollection = $order->getTracksCollection();
-        $trackNumbers = array();
+        $trackNumbers = [];
         foreach ($tracksCollection->getItems() as $track) {
             $trackNumbers[] = $track->getTrackNumber();
         }
         $trackingNumbers = implode(", ", $trackNumbers);
-        $replace = array(
+        $replace = [
             '{billing_first_name}' => $this->helper->cleanDiacritice($billingAddress['firstname']),
             '{billing_last_name}' => $this->helper->cleanDiacritice($billingAddress['lastname']),
             '{shipping_first_name}' => $this->helper->cleanDiacritice($shippingAddress['firstname']),
@@ -84,7 +84,7 @@ class OrderSave implements ObserverInterface
             '{order_date}' => date('d.m.Y', strtotime($order->getCreatedAt())),
             '{order_total}' => $formattedPrice,
             '{tracking_numbers}' => $trackingNumbers
-        );
+        ];
         foreach ($replace as $key => $value) {
             $message = str_replace($key, $value, $message);
         }

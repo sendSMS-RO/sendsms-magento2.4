@@ -1,5 +1,7 @@
-<form class="form" action="<?php echo $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]) ?>" method="post">
-    <input name="form_key" type="hidden" value="<?php echo \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\Data\Form\FormKey')->getFormKey(); ?>" />
+<form class="form" action="<?= $block->escapeHtml($block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true])) ?>" method="post">
+    <input name="form_key" type="hidden" value="<?= \Magento\Framework\App\ObjectManager::getInstance()
+                                                    ->get(\Magento\Framework\Data\Form\FormKey::class)
+                                                    ->getFormKey(); ?>" />
     <div class="fieldset-wrapper">
         <div class="admin__fieldset-wrapper-content">
             <fieldset class="admin__fieldset">
@@ -32,7 +34,8 @@
                         <span>Message</span>
                     </label>
                     <div class="admin__field-control">
-                        <textarea id="message" name="message" class="admin__control-textarea sendsms-char-count" required></textarea>
+                        <textarea id="message" name="message" 
+                            class="admin__control-textarea sendsms-char-count" required></textarea>
                     </div>
                 </div>
                 <div class="admin__field">

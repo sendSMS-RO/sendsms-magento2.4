@@ -1,4 +1,5 @@
 <?php
+
 namespace AnyPlaceMedia\SendSMS\Model\Source;
 
 class Products implements \Magento\Framework\Option\ArrayInterface
@@ -13,7 +14,9 @@ class Products implements \Magento\Framework\Option\ArrayInterface
         $result = [];
 
         $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
-        $productCollectionFactory = $objectManager->get('\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory');
+        $productCollectionFactory = $objectManager->get(
+            \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class
+        );
         $collection = $productCollectionFactory->create();
         $collection->addAttributeToSelect('*');
 

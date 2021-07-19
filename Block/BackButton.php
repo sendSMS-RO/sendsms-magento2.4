@@ -3,9 +3,6 @@ namespace AnyPlaceMedia\SendSMS\Block;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
-/**
- * Class SaveButton
- */
 class BackButton extends GenericButton implements ButtonProviderInterface
 {
     /**

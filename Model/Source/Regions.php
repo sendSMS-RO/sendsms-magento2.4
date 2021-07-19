@@ -1,4 +1,5 @@
 <?php
+
 namespace AnyPlaceMedia\SendSMS\Model\Source;
 
 class Regions implements \Magento\Framework\Option\ArrayInterface
@@ -13,16 +14,23 @@ class Regions implements \Magento\Framework\Option\ArrayInterface
         $result = [];
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $resource = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $tableName = $resource->getTableName('customer_address_entity');
-        $sql = "SELECT DISTINCT region FROM " . $tableName;
-        $results = $connection->fetchAll($sql);
+        $collectionFactory = $objectManager->get(
+            \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory::class
+        );
+        $resource = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+        $collection = $collectionFactory->create();
+        $collection->getSelect()->join(
+            $resource->getTableName('customer_address_entity'),
+            'e.entity_id=' . $resource->getTableName('customer_address_entity') . '.parent_id',
+            'region'
+        );
 
-        foreach ($results as $row) {
-            $result[] = ['value' => $row['region'], 'label' => $row['region']];
+        $data = $collection->getData();
+        foreach ($data as $d) {
+            if (!in_array(['value' => $d['region'], 'label' => $d['region']], $result)) {
+                $result[] = ['value' => $d['region'], 'label' => $d['region']];
+            }
         }
-
         return $result;
     }
 }

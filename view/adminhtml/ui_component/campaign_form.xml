@@ -47,34 +47,24 @@
             </argument>
         </field>
 
-        <field name="start_date">
+        <field name="start_date" formElement="date">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">string</item>
                     <item name="label" xsi:type="string" translate="true">Start period</item>
                     <item name="formElement" xsi:type="string">date</item>
                     <item name="source" xsi:type="string">campaign</item>
-                    <item name="options" xsi:type="array">
-                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
-                        <item name="timeFormat" xsi:type="string">hh:mm:ss</item>
-                        <item name="showsTime" xsi:type="boolean">false</item>
-                    </item>
                 </item>
             </argument>
         </field>
 
-        <field name="end_date">
+        <field name="end_date" formElement="date">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">string</item>
                     <item name="label" xsi:type="string" translate="true">End period</item>
                     <item name="formElement" xsi:type="string">date</item>
                     <item name="source" xsi:type="string">campaign</item>
-                    <item name="options" xsi:type="array">
-                        <item name="dateFormat" xsi:type="string">yyyy-MM-dd</item>
-                        <item name="timeFormat" xsi:type="string">hh:mm:ss</item>
-                        <item name="showsTime" xsi:type="boolean">false</item>
-                    </item>
                 </item>
             </argument>
         </field>
@@ -95,7 +85,7 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">AnyPlaceMedia\SendSMS\Model\Source\Products</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Purchased product</item>
+                    <item name="label" xsi:type="string">Purchased product (don't select for all items)</item>
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">multiselect</item>
@@ -108,7 +98,7 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">AnyPlaceMedia\SendSMS\Model\Source\Regions</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Billing country</item>
+                    <item name="label" xsi:type="string">Billing state (don't select for all states)</item>
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">multiselect</item>

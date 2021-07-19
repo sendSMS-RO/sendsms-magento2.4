@@ -1,4 +1,6 @@
-<?php namespace AnyPlaceMedia\SendSMS\Model\ResourceModel\History;
+<?php
+
+namespace AnyPlaceMedia\SendSMS\Model\ResourceModel\History;
 
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -14,7 +16,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     protected function _construct()
     {
-        $this->_init('AnyPlaceMedia\SendSMS\Model\History', 'AnyPlaceMedia\SendSMS\Model\ResourceModel\History');
+        $this->_init(
+            \AnyPlaceMedia\SendSMS\Model\History::class,
+            \AnyPlaceMedia\SendSMS\Model\ResourceModel\History::class
+        );
     }
-
 }
