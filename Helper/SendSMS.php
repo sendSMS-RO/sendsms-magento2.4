@@ -171,6 +171,7 @@ class SendSMS extends AbstractHelper
             $url .= "&username=" . urlencode($username);
             $url .= "&password=" . urlencode($password);
             $url .= "&name=" . urlencode($name);
+            $url .= "&start_time=";
 
             $readableFile = $this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->openFile('sendsms/batch.csv');
             $data = 'data=' . urlencode($readableFile->readAll());
