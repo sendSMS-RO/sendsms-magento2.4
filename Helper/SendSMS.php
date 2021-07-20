@@ -179,6 +179,7 @@ class SendSMS extends AbstractHelper
             unset($stream);
             $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
             $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
+            $this->curl->addHeader("Connection", "keep-alive");
 
             $this->curl->post($url, $data);
 
