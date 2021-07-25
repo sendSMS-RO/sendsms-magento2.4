@@ -155,11 +155,24 @@ class SendSMS extends AbstractHelper
             $stream->writeCsv($header);
 
             foreach ($phones as $phone) {
+                $simulation = $this->scopeConfig->getValue(
+                    'sendsms_settings/sendsms/sendsms_settings_simulation',
+                    ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+                );
+                if ($simulation) {
+                    $phone = $this->scopeConfig->getValue(
+                        'sendsms_settings/sendsms/sendsms_settings_simulation_number',
+                        ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+                    );
+                }
                 $data = [];
                 $data[] = $message;
                 $data[] = $this->validatePhone($phone);
                 $data[] = $from;
                 $stream->writeCsv($data);
+                if($simulation) {
+                    break;
+                }
             }
 
             $name = 'Magento - ' . $this->storeManager->getStore()->getName() . ' - ' . uniqid();
