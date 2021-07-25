@@ -2,7 +2,7 @@
 
 namespace AnyPlaceMedia\SendSMS\Controller\Adminhtml\Campaign;
 
-use Magento\Framework\App\Action\Context;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\Registry;
 use Magento\Framework\Controller\Result\JsonFactory;

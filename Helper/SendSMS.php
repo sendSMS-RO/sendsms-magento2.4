@@ -167,21 +167,18 @@ class SendSMS extends AbstractHelper
             $url = "https://api.sendsms.ro/json";
 
             // $start_time = "2970-01-01 02:00:00";
-            $start_time = "";
             $url = $url . "?action=batch_create";
             $url .= "&username=" . urlencode($username);
             $url .= "&password=" . urlencode($password);
             $url .= "&name=" . urlencode($name);
-
-            if (empty($start_time)) {
-                $url .= "&start_time=" . urlencode($start_time);
-            }
+            $url .= "&start_time=";
             $readableFile = $this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->openFile('sendsms/batch.csv');
             $data = 'data=' . urlencode($readableFile->readAll());
             $readableFile->close();
             unset($stream);
             $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
             $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
+            $this->curl->addHeader("Connection", "keep-alive");
 
             $this->curl->post($url, $data);
 

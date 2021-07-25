@@ -31,7 +31,7 @@ Acest modul necesita sa aveti instalat Magento.
 
 composer config repositories.sendSMS-RO-sendsms-magento git git@github.com:sendSMS-RO/sendsms-magento2.4.git  
 
-composer require sendsmsro/sendsms-magento2.4 dev-master  
+composer require anyplacemedia/sendsms dev-master  
  
  
 
