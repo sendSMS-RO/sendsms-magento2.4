@@ -39,12 +39,18 @@ class OrderSave implements ObserverInterface
 
         $order = $observer->getEvent()->getOrder();
         $status = $order->getStatus();
+
+        error_log("aici");
+        error_log($this->scopeConfig->getValue(
+            'sendsms_settings/sendsms/sendsms_settings_messages',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ));
+
         $text = $objectManager->get(\Magento\Framework\Serialize\SerializerInterface::class)
             ->unserialize($this->scopeConfig->getValue(
                 'sendsms_settings/sendsms/sendsms_settings_messages',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             ));
-
         foreach ($text as $config) {
             if ($status == $config['status']) {
                 $message = $config['message'];
@@ -76,10 +82,10 @@ class OrderSave implements ObserverInterface
         }
         $trackingNumbers = implode(", ", $trackNumbers);
         $replace = [
-            '{billing_first_name}' => $this->helper->cleanDiacritice($billingAddress['firstname']),
-            '{billing_last_name}' => $this->helper->cleanDiacritice($billingAddress['lastname']),
-            '{shipping_first_name}' => $this->helper->cleanDiacritice($shippingAddress['firstname']),
-            '{shipping_last_name}' => $this->helper->cleanDiacritice($shippingAddress['lastname']),
+            '{billing_first_name}' => $billingAddress['firstname'],
+            '{billing_last_name}' => $billingAddress['lastname'],
+            '{shipping_first_name}' => $shippingAddress['firstname'],
+            '{shipping_last_name}' => $shippingAddress['lastname'],
             '{order_number}' => $order->getRealOrderId(),
             '{order_date}' => date('d.m.Y', strtotime($order->getCreatedAt())),
             '{order_total}' => $formattedPrice,
