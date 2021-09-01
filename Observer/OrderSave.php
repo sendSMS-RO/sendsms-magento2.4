@@ -40,28 +40,25 @@ class OrderSave implements ObserverInterface
         $order = $observer->getEvent()->getOrder();
         $status = $order->getStatus();
 
-        error_log("aici");
-        error_log($this->scopeConfig->getValue(
+        $data = $this->scopeConfig->getValue(
             'sendsms_settings/sendsms/sendsms_settings_messages',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        ));
-
-        $text = $objectManager->get(\Magento\Framework\Serialize\SerializerInterface::class)
-            ->unserialize($this->scopeConfig->getValue(
-                'sendsms_settings/sendsms/sendsms_settings_messages',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-            ));
-        foreach ($text as $config) {
-            if ($status == $config['status']) {
-                $message = $config['message'];
-                $gdpr = $config['gdpr'] === "1" ? true : false;
-                $short = $config['short'] === "1" ? true : false;
+        );
+        if ($data) {
+            $text = $objectManager->get(\Magento\Framework\Serialize\SerializerInterface::class)
+                ->unserialize($data);
+            foreach ($text as $config) {
+                if ($status == $config['status']) {
+                    $message = $config['message'];
+                    $gdpr = $config['gdpr'] === "1" ? true : false;
+                    $short = $config['short'] === "1" ? true : false;
+                }
             }
-        }
 
-        if (!empty($message)) {
-            $message = $this->replaceVariables($message, $order);
-            $this->helper->sendSMS($order->getBillingAddress()->getTelephone(), $message, 'order', $gdpr, $short);
+            if (!empty($message)) {
+                $message = $this->replaceVariables($message, $order);
+                $this->helper->sendSMS($order->getBillingAddress()->getTelephone(), $message, 'order', $gdpr, $short);
+            }
         }
     }
 
