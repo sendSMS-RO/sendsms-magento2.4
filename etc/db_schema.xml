@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+  <table name="sendsms_history" resource="default" engine="innodb" comment="sendsms_history">
+    <column xsi:type="int" name="history_id" padding="11" unsigned="false" nullable="false" identity="true" comment="History ID"/>
+    <column xsi:type="varchar" name="status" nullable="true" length="255" comment="Status"/>
+    <column xsi:type="varchar" name="message" nullable="true" length="255" comment="Message"/>
+    <column xsi:type="longtext" name="details" nullable="true" comment="Details"/>
+    <column xsi:type="longtext" name="content" nullable="true" comment="Content"/>
+    <column xsi:type="varchar" name="type" nullable="true" length="255" comment="Type"/>
+    <column xsi:type="datetime" name="sent_on" on_update="false" nullable="false" comment="Sent_on"/>
+    <column xsi:type="varchar" name="phone" nullable="true" length="255" comment="Phone"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+      <column name="history_id"/>
+    </constraint>
+  </table>
+</schema>
